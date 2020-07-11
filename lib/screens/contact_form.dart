@@ -39,97 +39,131 @@ class _ContactPageState extends State<ContactPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_editedContact.name ?? 'Novo contato'),
-        backgroundColor: Colors.red,
-        centerTitle: true,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          if(_editedContact.name != null && _editedContact.name.isNotEmpty) {
-            Navigator.pop(context, _editedContact);
-          }
-          else{
-            FocusScope.of(context).requestFocus(_nameFocus);
-          }
-        },
-        backgroundColor: Colors.red,
-        child: Icon(Icons.save),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(10.0),
-        child: Column(
-          children: <Widget>[
-            GestureDetector(
-              child: Container(
-                width: 140.0,
-                height: 140.0,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: _searchImage(),
+    return WillPopScope(
+      onWillPop: _requestPop,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(_editedContact.name ?? 'Novo contato'),
+          backgroundColor: Colors.red,
+          centerTitle: true,
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            if (_editedContact.name != null && _editedContact.name.isNotEmpty) {
+              Navigator.pop(context, _editedContact);
+            } else {
+              FocusScope.of(context).requestFocus(_nameFocus);
+            }
+          },
+          backgroundColor: Colors.red,
+          child: Icon(Icons.save),
+        ),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(10.0),
+          child: Column(
+            children: <Widget>[
+              GestureDetector(
+                child: Container(
+                  width: 140.0,
+                  height: 140.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: _searchImage(),
+                    ),
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0, left: 18.0, right: 18.0),
-              child: TextField(
-                focusNode: _nameFocus,
-                controller: _nomeController,
-                onChanged: (text){
-                  _userEdited = true;
-                  setState(() {
-                    _editedContact.name = text;
-                  });
-                },
-                decoration: InputDecoration(
-                  labelText: 'Nome',
+              Padding(
+                padding:
+                    const EdgeInsets.only(top: 8.0, left: 18.0, right: 18.0),
+                child: TextField(
+                  focusNode: _nameFocus,
+                  controller: _nomeController,
+                  onChanged: (text) {
+                    _userEdited = true;
+                    setState(() {
+                      _editedContact.name = text;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Nome',
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0, left: 18.0, right: 18.0),
-              child: TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                onChanged: (text){
-                  _userEdited = true;
+              Padding(
+                padding:
+                    const EdgeInsets.only(top: 8.0, left: 18.0, right: 18.0),
+                child: TextField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  onChanged: (text) {
+                    _userEdited = true;
                     _editedContact.email = text;
-                },
-                decoration: InputDecoration(
-                  labelText: 'E-mail',
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'E-mail',
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0, left: 18.0, right: 18.0, bottom: 8.0),
-              child: TextField(
-                controller: _phoneController,
-                keyboardType: TextInputType.phone,
-                onChanged: (text){
-                  _userEdited = true;
-                  _editedContact.phone = text;
-                },
-                decoration: InputDecoration(
-                  labelText: 'Phone',
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 8.0, left: 18.0, right: 18.0, bottom: 8.0),
+                child: TextField(
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  onChanged: (text) {
+                    _userEdited = true;
+                    _editedContact.phone = text;
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Phone',
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
+  Future<bool> _requestPop() {
+    if (_userEdited) {
+      showDialog(
+          context: context,
+          builder: (contextDialog) {
+            return AlertDialog(
+              title: Text('Descartar alterações?'),
+              content: Text('Se sair, as alterações serão perdidas.'),
+              actions: <Widget>[
+                FlatButton(
+                  onPressed: () {
+                    Navigator.pop(contextDialog);
+                  },
+                  child: Text('Cancelar'),
+                ),
+                FlatButton(
+                  onPressed: () {
+                    Navigator.pop(contextDialog);
+                    Navigator.pop(context);
+                  },
+                  child: Text('Confirmar'),
+                ),
+              ],
+            );
+          });
+      return Future.value(false);
+    } else {
+      return Future.value(true);
+    }
+  }
+
   Object _searchImage() {
     if (_editedContact.img == null || _editedContact.img == 'imgTest') {
       return AssetImage('images/person.png');
-    }
-    else {
+    } else {
       return FileImage(File(_editedContact.img));
     }
   }
-  
 }

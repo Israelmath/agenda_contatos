@@ -22,8 +22,7 @@ class Contact {
       'phoneColumn': phone,
       'imgColumn': img
     };
-
-    if ('idColumn' == null) {
+    if (id != null) {
       mapContact['idColumn'] = id;
     }
 

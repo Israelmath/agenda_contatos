@@ -29,7 +29,7 @@ class ContactDao {
 
   Future<Database> initDb() async {
     final databasePath = await getDatabasesPath();
-    final path = join(databasePath, 'contacts.db');
+    final path = join(databasePath, 'contacts1.db');
 
 //    print(path);
 
@@ -80,7 +80,7 @@ class ContactDao {
 
   Future<int> updateContact(Contact contact) async {
     Database dbContact = await db;
-    print(contact);
+    print('Dentro do DAO: \ncontact $contact');
     return await dbContact.update(contactTable, contact.toMap(),
         where: '$idColumn = ?', whereArgs: [contact.id]);
   }

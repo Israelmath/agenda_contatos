@@ -43,7 +43,7 @@ class _DashboardState extends State<Dashboard> {
       body: ListView.builder(
         itemCount: contacts.length,
         itemBuilder: (context, index) {
-          return ContactCard(contacts[index]);
+          return ContactCard(contacts[index], contacts);
         },
         padding: EdgeInsets.all(10),
       ),
